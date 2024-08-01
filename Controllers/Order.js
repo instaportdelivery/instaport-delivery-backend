@@ -24,7 +24,11 @@ const createOrder = async (req, res) => {
 }
 
 const customerOrders = async (req, res) => {
-    const orders = await Order.find({ customer: req.customer._id }).sort({
+    const orders = await Order.find({
+        customer: req.customer._id, status: {
+            $ne: 'unpaid'
+        }
+    }).sort({
         time_stamp: "desc"
     }).populate("rider").populate("pastRiders");
     if (!orders) {
@@ -39,7 +43,11 @@ const customerOrders = async (req, res) => {
 }
 
 const orderByIDCustomer = async (req, res) => {
-    const order = await Order.findOne({ _id: req.params._id }).populate("customer", "-password").populate("rider", "-password").populate("pastRiders", "-password").populate("pastRiders");
+    const order = await Order.findOne({
+        _id: req.params._id, status: {
+            $ne: 'unpaid'
+        }
+    }).populate("customer", "-password").populate("rider", "-password").populate("pastRiders", "-password").populate("pastRiders");
     if (!order) {
         res.json({ error: true, message: "Something Went Wrong", order: undefined })
     } else {
@@ -52,7 +60,11 @@ const orderByIDCustomer = async (req, res) => {
 }
 
 const orderByIDCustomerApp = async (req, res) => {
-    const order = await Order.findOne({ _id: req.params._id }).populate("rider").populate("pastRiders");
+    const order = await Order.findOne({
+        _id: req.params._id, status: {
+            $ne: 'unpaid'
+        }
+    }).populate("rider").populate("pastRiders");
     if (!order) {
         res.json({ error: true, message: "Something Went Wrong", order: undefined })
     } else {
@@ -179,7 +191,11 @@ const statusOrder = async (req, res) => {
 
 //Get All Order
 const allOrders = async (req, res) => {
-    const orders = await Order.find({}).populate("customer", "-password").populate("rider", "-password").populate("pastRiders");
+    const orders = await Order.find({
+        status: {
+            $ne: 'unpaid'
+        }
+    }).populate("customer", "-password").populate("rider", "-password").populate("pastRiders");
     if (!orders) {
         res.json({ error: true, message: "Something Went Wrong", order: undefined })
 
@@ -265,7 +281,11 @@ const riderOrders = async (req, res) => {
         let orders = [];
 
         if (rider.wallet_amount >= 0) {
-            orders = await Order.find({ $or: [{ rider: req.rider._id }, { status: "new" }] })
+            orders = await Order.find({
+                status: {
+                    $ne: 'unpaid'
+                }, $or: [{ rider: req.rider._id }, { status: "new" }]
+            })
                 .populate("customer", "-password")
                 .populate("rider", "-password")
                 .sort({ time_stamp: "descending" })
