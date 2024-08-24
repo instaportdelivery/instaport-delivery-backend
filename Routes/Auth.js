@@ -11,7 +11,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 
 	const transaction_id = uuidv4();
 	const jwt_payload = {
-		"mercid": "UATINSPTV2",
+		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
 		"amount": Math.round(req.body.amount),
 		"order_date": "2023-07-30T20:25:00+05:30",
@@ -44,7 +44,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 	const header = {
 		"alg": "HS256",
 		"typ": "JWT",
-		"clientid": "uatinsptv2"
+		"clientid": "instaprtv2"
 	};
 
 	const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -69,12 +69,12 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 		body: jws,
 	};
 
-	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
+	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
 			const transaction_payload = {
-				"mercid": "UATINSPTV2",
+				"mercid": "INSTAPRTV2",
 				"orderid": transaction_id,
 			}
 			const encodedPayloadTransaction = btoa(JSON.stringify(transaction_payload)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -82,7 +82,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 			const signature = CryptoJS.HmacSHA256(signingString, secretKey).toString(CryptoJS.enc.Base64);
 			const encodedSignature = signature.replace(/\+/g, '-').replace(/\//g, '_').replace("=", "");
 			const jws = `${encodedHeader}.${encodedPayloadTransaction}.${encodedSignature}`;
-			fetch("https://uat1.billdesk.com/u2/payments/ve1_2/transactions/get", {
+			fetch("https://api.billdesk.com/payments/ve1_2/transactions/get", {
 				method: 'POST',
 				headers: {
 					"Content-Type": "application/jose",
@@ -119,7 +119,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const transaction_id = uuidv4();
 	const jwt_payload = {
-		"mercid": "UATINSPTV2",
+		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
 		"amount": req.body.amount,
 		"order_date": "2023-07-30T20:25:00+05:30",
@@ -127,7 +127,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
 		},
-		"ru": "https://instaport-backend-main.vercel.app/customer-transactions/wallet-topup",
+		"ru": "http://13.202.178.247:1000/customer-transactions/wallet-topup",
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
@@ -149,7 +149,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const header = {
 		"alg": "HS256",
 		"typ": "JWT",
-		"clientid": "uatinsptv2"
+		"clientid": "instaprtv2"
 	};
 
 	const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -174,7 +174,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		body: jws,
 	};
 
-	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
+	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
@@ -212,7 +212,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	let formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
 
 	const jwt_payload = {
-		"mercid": "UATINSPTV2",
+		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
 		"amount": req.body.amount,
 		"order_date": formattedDate,
@@ -220,7 +220,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
 		},
-		"ru": `https://instaport-backend-main.vercel.app/customer-transactions/app-create-payment/${req.body.order}`,
+		"ru": `http://13.202.178.247:1000/customer-transactions/app-create-payment/${req.body.order}`,
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
@@ -242,7 +242,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	const header = {
 		"alg": "HS256",
 		"typ": "JWT",
-		"clientid": "uatinsptv2"
+		"clientid": "instaprtv2"
 	};
 
 	const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -267,7 +267,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 		body: jws,
 	};
 
-	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
+	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
@@ -305,7 +305,7 @@ router.post("/payment-dues-rider", RiderToken, async (req, res) => {
 	let formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
 
 	const jwt_payload = {
-		"mercid": "UATINSPTV2",
+		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
 		"amount": Math.abs(Number(req.body.amount)),
 		"order_date": formattedDate,
@@ -313,7 +313,7 @@ router.post("/payment-dues-rider", RiderToken, async (req, res) => {
 		"additional_info": {
 			"additional_info1": `${req.rider._id}`,
 		},
-		"ru": `https://instaport-backend-main.vercel.app/rider/app-payment`,
+		"ru": `http://13.202.178.247:1000/rider/app-payment`,
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
@@ -335,7 +335,7 @@ router.post("/payment-dues-rider", RiderToken, async (req, res) => {
 	const header = {
 		"alg": "HS256",
 		"typ": "JWT",
-		"clientid": "uatinsptv2"
+		"clientid": "instaprtv2"
 	};
 
 	const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -360,7 +360,7 @@ router.post("/payment-dues-rider", RiderToken, async (req, res) => {
 		body: jws,
 	};
 
-	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
+	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
