@@ -10,7 +10,7 @@ const app = express();
 app.use(cors({
     origin: ["*", "http://localhost:3000", "https://www.instaportdelivery.com", "https://instaportdelivery.com", "http://localhost:5500", "https://instaport-transactions.vercel.app", "https://instaport.vercel.app", "https://instaport-website.vercel.app"]
 }))
-const port = 1000;
+const port = process.env.PORT || 1000;
 const httpServer = createServer(app);
 
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -95,5 +95,3 @@ app.post("/authtest", (req, res) => {
 httpServer.listen(port, () => {
     console.log(`InstaPort backend listening on port ${port}`);
 })
-
-
