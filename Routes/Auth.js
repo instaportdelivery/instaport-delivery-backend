@@ -171,6 +171,8 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 
 	const jws = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 
+	console.log(jws)
+
 	const headers = {
 		"Content-Type": "application/jose",
 		"bd-timestamp": Date.now(),
