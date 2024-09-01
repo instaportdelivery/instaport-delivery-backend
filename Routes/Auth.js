@@ -143,7 +143,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 			"ip": req.body.ip,
 			"user_agent": req.body.user_agent,
 			"accept_header": "text/html",
-			"fingerprintid": "61b12c18b5d0cf901be34a23ca64bb19",
+			// "fingerprintid": "61b12c18b5d0cf901be34a23ca64bb19",
 			"browser_tz": "-330",
 			"browser_color_depth": "32",
 			"browser_java_enabled": "false",
