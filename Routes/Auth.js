@@ -124,6 +124,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 //test
 router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const transaction_id = uuidv4();
+	console.log(req.body.ip, "ip")
 	const jwt_payload = {
 		// "mercid": "UATINSPTV2",
 		"mercid": "INSTAPRTV2",
