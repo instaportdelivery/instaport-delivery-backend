@@ -187,6 +187,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
+			console.log(result, secretKey)
 			const data = await jwt.verify(result, secretKey)
 			console.log("after order create", data)
 			console.log("after order create test", {
