@@ -72,7 +72,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 	};
 
 	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
-	// fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
+		// fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
@@ -129,7 +129,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
 		"amount": req.body.amount,
-		"order_date": "2023-07-30T20:25:00+05:30",
+		"order_date": new Date(),
 		"currency": "356",
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
@@ -139,7 +139,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
-			"ip": "192.168.0.104",
+			"ip": req.body.ip,
 			"user_agent": req.body.user_agent,
 			"accept_header": "text/html",
 			"fingerprintid": "61b12c18b5d0cf901be34a23ca64bb19",
@@ -188,6 +188,14 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
+			console.log("after order create", data)
+			console.log("after order create test", {
+				bdorderid: data.bdorderid,
+				orderid: data.orderid,
+				authorization: data?.links[1].headers.authorization,
+				amount: data.amount,
+				extra: data
+			})
 			res.json({
 				bdorderid: data.bdorderid,
 				orderid: data.orderid,
@@ -197,7 +205,6 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 			})
 		})
 		.catch(error => console.log('error', error));
-
 })
 
 router.post("/payment-order", CustomerToken, async (req, res) => {
