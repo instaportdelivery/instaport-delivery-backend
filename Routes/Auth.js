@@ -129,7 +129,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		// "mercid": "UATINSPTV2",
 		"mercid": "INSTAPRTV2",
 		"orderid": transaction_id,
-		"amount": req.body.amount,
+		"amount": `${req.body.amount}.00`,
 		"order_date": new Date(),
 		"currency": "356",
 		"additional_info": {
