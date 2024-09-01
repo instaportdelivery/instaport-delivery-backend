@@ -179,11 +179,13 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		"bd-traceid": transaction_id,
 		"Accept": "application/jose"
 	}
-	var requestOptions = {
+	const requestOptions = {
 		method: 'POST',
 		headers: headers,
 		body: jws,
 	};
+
+	console.log(headers, requestOptions)
 
 	// fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
 	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
