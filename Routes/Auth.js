@@ -71,8 +71,8 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 		body: jws,
 	};
 
-	fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
-		// fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
+	// fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
+		fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
@@ -128,6 +128,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const jwt_payload = {
 		// "mercid": "UATINSPTV2",
 		"mercid": "INSTAPRTV2",
+		// "mercid": "INSTAPRIDR",
 		"orderid": transaction_id,
 		"amount": `${req.body.amount}.00`,
 		"order_date": new Date(),
@@ -153,7 +154,8 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 			"browser_javascript_enabled": "true"
 		}
 	}
-	const secretKey = 'F1kyMNGYF1BH14L8AZtHRaadCoZrQJqy';
+	const secretKey = 'F1kyMNGYF1BHl4L8AZtHRaadCoZrQJqy';
+	// const secretKey = '6QyIqweGQBJH6t1pfBVnSE8ItaWskzk5';
 
 	const header = {
 		"alg": "HS256",
