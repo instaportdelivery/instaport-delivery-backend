@@ -72,7 +72,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 	};
 
 	// fetch("https://uat1.billdesk.com/u2/payments/ve1_2/orders/create", requestOptions)
-		fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
+	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
@@ -120,9 +120,21 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 
 })
 
+function formatDateToCustomISO(date) {
+	const tzOffset = date.getTimezoneOffset(); // get timezone offset in minutes
+	const offsetSign = tzOffset > 0 ? "-" : "+";
+	const offsetHours = Math.floor(Math.abs(tzOffset) / 60).toString().padStart(2, '0');
+	const offsetMinutes = (Math.abs(tzOffset) % 60).toString().padStart(2, '0');
+
+	const formattedDate = date.toISOString().slice(0, -1); // remove the trailing 'Z'
+	return `${formattedDate}${offsetSign}${offsetHours}:${offsetMinutes}`;
+}
 
 //test
 router.post("/topup-wallet", CustomerToken, async (req, res) => {
+	const date = new Date();
+	const customFormattedDate = formatDateToCustomISO(date);
+	console.log("CUSTOM DATE", customFormattedDate);
 	const transaction_id = uuidv4();
 	console.log(req.body.ip, "ip")
 	const jwt_payload = {
@@ -131,7 +143,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 		// "mercid": "INSTAPRIDR",
 		"orderid": transaction_id,
 		"amount": `${req.body.amount}.00`,
-		"order_date": new Date(),
+		"order_date": customFormattedDate,
 		"currency": "356",
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
