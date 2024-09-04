@@ -120,14 +120,23 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 
 })
 
-function formatDateToCustomISO(date) {
-	const tzOffset = date.getTimezoneOffset(); // get timezone offset in minutes
-	const offsetSign = tzOffset > 0 ? "-" : "+";
-	const offsetHours = Math.floor(Math.abs(tzOffset) / 60).toString().padStart(2, '0');
-	const offsetMinutes = (Math.abs(tzOffset) % 60).toString().padStart(2, '0');
+function formatDateToCustomISO(currentDate) {
+	let year = currentDate.getFullYear();
+	let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so add 1
+	let day = String(currentDate.getDate()).padStart(2, '0');
+	let hours = String(currentDate.getHours()).padStart(2, '0');
+	let minutes = String(currentDate.getMinutes()).padStart(2, '0');
+	let seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
-	const formattedDate = date.toISOString().slice(0, -1); // remove the trailing 'Z'
-	return `${formattedDate}${offsetSign}${offsetHours}:${offsetMinutes}`;
+	// Get the timezone offset in hours and minutes
+	let timezoneOffset = currentDate.getTimezoneOffset();
+	let offsetHours = Math.abs(Math.floor(timezoneOffset / 60));
+	let offsetMinutes = Math.abs(timezoneOffset % 60);
+	let offsetSign = timezoneOffset < 0 ? '+' : '-';
+
+	// Construct the desired string format
+	let formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+	return formattedDate
 }
 
 //test
