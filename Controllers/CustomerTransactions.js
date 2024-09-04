@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const walletTopUp = async (req, res) => {
 	try {
-		const transactionData = await jwt.verify(req.body.transaction_response, "31MhbX6UsCr7io5GJltm7kXsbbnxs7KO")
+		const transactionData = await jwt.verify(req.body.transaction_response, "F1kyMNGYF1BHl4L8AZtHRaadCoZrQJqy")
 		const updatedCustomer = await User.findByIdAndUpdate(transactionData.additional_info.additional_info1, {
 			$inc: {
 				wallet: Number(transactionData.amount)
