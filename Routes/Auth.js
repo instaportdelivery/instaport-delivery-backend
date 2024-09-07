@@ -22,7 +22,7 @@ router.post("/create-order/upi", CustomerToken, async (req, res) => {
 	const jwt_payload = {
 		"mercid": `${process.env.MERCHANT_ID}`,
 		"orderid": transaction_id,
-		"amount": Math.round(req.body.amount),
+		"amount": `${Math.ceil(Number(req.body.amount))}`,
 		"order_date": customFormattedDate,
 		"currency": "356",
 		"additional_info": {
@@ -137,7 +137,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const jwt_payload = {
 		"mercid": `${process.env.MERCHANT_ID}`,
 		"orderid": transaction_id,
-		"amount": `${req.body.amount}`,
+		"amount": `${Math.ceil(Number(req.body.amount))}`,
 		"order_date": customFormattedDate,
 		"currency": "356",
 		"additional_info": {
@@ -236,7 +236,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	const jwt_payload = {
 		"mercid": `${process.env.MERCHANT_ID}`,
 		"orderid": transaction_id,
-		"amount": req.body.amount,
+		"amount": `${Math.ceil(Number(req.body.amount))}`,
 		"order_date": formattedDate,
 		"currency": "356",
 		"additional_info": {
