@@ -92,6 +92,6 @@ app.post("/authtest", (req, res) => {
 })
 
 
-httpServer.listen(port, () => {
-    console.log(`InstaPort backend listening on port ${port}`);
-})
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on port ${port}`);
+});
