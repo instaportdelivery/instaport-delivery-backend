@@ -137,7 +137,7 @@ router.post("/topup-wallet", CustomerToken, async (req, res) => {
 	const jwt_payload = {
 		"mercid": `${process.env.MERCHANT_ID}`,
 		"orderid": transaction_id,
-		"amount": `${req.body.amount}.00`,
+		"amount": `${req.body.amount}`,
 		"order_date": customFormattedDate,
 		"currency": "356",
 		"additional_info": {
@@ -265,9 +265,10 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	const signingString = `${encodedHeader}.${encodedPayload}`;
 
 	const signature = CryptoJS.HmacSHA256(signingString, secretKey).toString(CryptoJS.enc.Base64);
-	const encodedSignature = signature.replace(/\+/g, '-').replace(/\//g, '_').replace("=", "");
+	const encodedSignature = signature.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, "");
 
 	const jws = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+	console.log("jws", jws.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ""))
 
 	const headers = {
 		"Content-Type": "application/jose",
@@ -278,13 +279,14 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	var requestOptions = {
 		method: 'POST',
 		headers: headers,
-		body: jws,
+		body: jws.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ""),
 	};
 
 	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
 		.then(response => response.text())
 		.then(async (result) => {
 			const data = await jwt.verify(result, secretKey)
+			console.log(data)
 			res.json({
 				bdorderid: data.bdorderid,
 				orderid: data.orderid,
