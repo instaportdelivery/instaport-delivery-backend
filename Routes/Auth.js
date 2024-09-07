@@ -16,25 +16,25 @@ const header = {
 const secretKey = `${process.env.SERVER_SECRET}`;
 
 router.post("/create-order/upi", CustomerToken, async (req, res) => {
-
+	const date = new Date();
+	const customFormattedDate = formatDateToCustomISO(date);
 	const transaction_id = uuidv4();
 	const jwt_payload = {
 		"mercid": `${process.env.MERCHANT_ID}`,
 		"orderid": transaction_id,
 		"amount": Math.round(req.body.amount),
-		"order_date": "2023-07-30T20:25:00+05:30",
+		"order_date": customFormattedDate,
 		"currency": "356",
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
 		},
-		"ru": "https://instaportdelivery.in/authtest",
+		"ru": "https://instaportdelivery.in/auth/test",
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
-			"ip": "192.168.0.104",
+			"ip": req.body.ip,
 			"user_agent": req.body.user_agent,
 			"accept_header": "text/html",
-			"fingerprintid": "61b12c18b5d0cf901be34a23ca64bb19",
 			"browser_tz": "-330",
 			"browser_color_depth": "32",
 			"browser_java_enabled": "false",
