@@ -242,7 +242,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
 		},
-		"ru": `https://instaportdelivery.in/customer-transactions/app-create-payment/${req.body.order}`,
+		"ru": `http://192.168.0.103:1000/customer-transactions/app-create-payment/${req.body.order}`,
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",

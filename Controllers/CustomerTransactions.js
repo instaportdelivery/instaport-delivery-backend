@@ -60,6 +60,7 @@ const createOrderTransaction = async (req, res) => {
 const createOrderTransactionApp = async (req, res) => {
 	try {
 		const transactionData = await jwt.verify(req.body.transaction_response, serverKey)
+		console.log(transactionData)
 		const transaction = new CustomerTransaction({ customer: transactionData.additional_info.additional_info1, payment_method_type: transactionData.payment_method_type, status: transactionData.transaction_error_type, amount: Number(transactionData.amount), type: "payment", wallet: false, debit: true });
 		const newTransaction = await transaction.save();
 		const updatedOrder = await Order.findByIdAndUpdate(req.params._id, { status: "new" })
