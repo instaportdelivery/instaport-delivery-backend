@@ -242,7 +242,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 		"additional_info": {
 			"additional_info1": `${req.customer._id}`,
 		},
-		"ru": `http://192.168.0.103:1000/customer-transactions/app-create-payment/${req.body.order}`,
+		"ru": `https://instaportdelivery.in/customer-transactions/app-create-payment/${req.body.order}`,
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
@@ -268,7 +268,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	const encodedSignature = signature.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, "");
 
 	const jws = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
-	console.log("jws", jws.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ""))
+	console.log("jws", jws.replace(/\+/g, '-').replace(/\//g, '_'))
 
 	const headers = {
 		"Content-Type": "application/jose",
@@ -279,7 +279,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 	var requestOptions = {
 		method: 'POST',
 		headers: headers,
-		body: jws.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ""),
+		body: jws.replace(/\+/g, '-').replace(/\//g, '_')
 	};
 
 	fetch("https://api.billdesk.com/payments/ve1_2/orders/create", requestOptions)
