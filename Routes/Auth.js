@@ -246,7 +246,7 @@ router.post("/payment-order", CustomerToken, async (req, res) => {
 		"itemcode": "DIRECT",
 		"device": {
 			"init_channel": "internet",
-			"ip": req.body.id,
+			"ip": req.body.ip,
 			"user_agent": req.body.user_agent,
 			"accept_header": "text/html",
 			"browser_tz": "-330",
