@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt');
 const jwtToken = require('jsonwebtoken');
 const RiderTransactions = require("../Models/RiderTransactions");
 
-const newDoc = (type) => {
+const newDoc = () => {
     const newDocObj = {
         url: "",
         status: "upload",
-        type: type
+        type: "none",
     }
 
     return newDocObj
@@ -25,10 +25,10 @@ const riderSignup = async (req, res) => {
             const rider = new Rider({
                 ...req.body,
                 password: hassPassword,
-                aadhar_number: newDoc("aadhaar"),
-                rc_book: newDoc("rc"),
-                drivinglicense: newDoc("driving"),
-                pan_number: newDoc("pan")
+                aadhar_number: newDoc(),
+                rc_book: newDoc(),
+                drivinglicense: newDoc(),
+                pan_number: newDoc()
             })
             const response = await rider.save();
             if (response) {
