@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
-
+const DOCUMENT_SCHEMA = new mongoose.Schema({
+    url: String,
+    approved: Boolean,
+    type: String
+})
 const RIDER_SCEHMA = new mongoose.Schema({
     fullname: {
         type: String,
@@ -49,7 +53,7 @@ const RIDER_SCEHMA = new mongoose.Schema({
     image: {
         type: String,
         required: true,
-        default: "https://instaportdelivery.com/assets/hero-img.png"
+        default: "https://instaport-s3.s3.ap-south-1.amazonaws.com/default/default_user.png"
     },
     reference_contact_1: {
         type: Map,
@@ -73,13 +77,16 @@ const RIDER_SCEHMA = new mongoose.Schema({
         type: String
     },
     aadhar_number: {
-        type: String,
+        type: DOCUMENT_SCHEMA,
     },
     pan_number: {
-        type: String
+        type: DOCUMENT_SCHEMA
     },
-    drivinglicense:{
-        type: String
+    drivinglicense: {
+        type: DOCUMENT_SCHEMA
+    },
+    rc_book: {
+        type: DOCUMENT_SCHEMA
     },
     orders: {
         type: [mongoose.SchemaTypes.ObjectId],
