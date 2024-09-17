@@ -8,7 +8,7 @@ const RiderTransactions = require("../Models/RiderTransactions");
 const newDoc = (type) => {
     const newDocObj = {
         url: "",
-        approved: "upload",
+        status: "upload",
         type: type
     }
 
