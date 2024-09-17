@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const DOCUMENT_SCHEMA = new mongoose.Schema({
     url: String,
-    approved: Boolean,
+    status: String,
     type: String
 })
 const RIDER_SCEHMA = new mongoose.Schema({
