@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt');
 const jwtToken = require('jsonwebtoken');
 const RiderTransactions = require("../Models/RiderTransactions");
 
-const newDoc = () => {
+const newDoc = (type) => {
     const newDocObj = {
         url: "",
         status: "upload",
-        type: "none",
+        type: type,
     }
 
     return newDocObj
@@ -25,10 +25,11 @@ const riderSignup = async (req, res) => {
             const rider = new Rider({
                 ...req.body,
                 password: hassPassword,
-                aadhar_number: newDoc(),
-                rc_book: newDoc(),
-                drivinglicense: newDoc(),
-                pan_number: newDoc()
+                image: newDoc("image"),
+                aadhar_number: newDoc("aadhaar"),
+                rc_book: newDoc("rc"),
+                drivinglicense: newDoc("driving"),
+                pan_number: newDoc("pan")
             })
             const response = await rider.save();
             if (response) {
@@ -223,6 +224,52 @@ const riderData = async (req, res) => {
 }
 const riderStatus = async (req, res) => {
     const rider = await Rider.findOne({ _id: req.body._id })
+    if (!rider) res.json({ error: true, message: "Something Went Wrong", rider: undefined })
+    else {
+        try {
+            const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
+                ...req.body
+            }, { returnOriginal: false })
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `key=${process.env.PUSH_NOTIFICATION_SERVER_KEY}`);
+            myHeaders.append("Content-Type", "application/json");
+            const raw = JSON.stringify({
+                "to": riderStatus.fcmtoken,
+                "notification": {
+                    "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
+                    "title": `Profile ${riderStatus.approve ? "approved" : "rejected"}`,
+                    "subtitle": "postman subtitle"
+                }
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("https://fcm.googleapis.com/fcm/send", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
+            res.json({
+                error: false,
+                message: "Updated Successful!",
+                rider: riderStatus,
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: true,
+                message: error.message,
+            });
+        }
+    }
+}
+
+const riderDocumentStatusUpdate = async (req, res) => {
+    const rider = await Rider.findOne({ _id: req.params._id })
+    console.log(req.body)
     if (!rider) res.json({ error: true, message: "Something Went Wrong", rider: undefined })
     else {
         try {
@@ -442,4 +489,4 @@ const getRiderValidity = async (req, res) => {
     }
 }
 
-module.exports = { riderSignup, riderSignin, riderUpdate, riderData, riderStatus, allRiders, deleteRider, orderAssign, getRiderTransactions, requestAmount, confirmPayAdmin, adminTransaction, reAssign, payDues, riderUpdatePassword, getRiderValidity }
+module.exports = { riderSignup, riderSignin, riderUpdate, riderData, riderStatus, allRiders, deleteRider, orderAssign, getRiderTransactions, requestAmount, confirmPayAdmin, adminTransaction, reAssign, payDues, riderUpdatePassword, getRiderValidity, riderDocumentStatusUpdate }

@@ -29,6 +29,10 @@ const RIDER_SCEHMA = new mongoose.Schema({
         required: true,
         default: false
     },
+    reason: {
+        type: String,
+        default: ""
+    },
     role: {
         type: String,
         default: "rider",
@@ -51,9 +55,7 @@ const RIDER_SCEHMA = new mongoose.Schema({
         default: Date.now()
     },
     image: {
-        type: String,
-        required: true,
-        default: "https://instaport-s3.s3.ap-south-1.amazonaws.com/default/default_user.png"
+        type: DOCUMENT_SCHEMA,
     },
     reference_contact_1: {
         type: Map,
