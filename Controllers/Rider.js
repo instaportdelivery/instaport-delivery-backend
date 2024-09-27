@@ -231,7 +231,13 @@ const riderStatus = async (req, res) => {
             const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
                 ...req.body
             }, { returnOriginal: false })
-
+            admin.messaging().send({
+                notification: {
+                    "title": `Profile ${riderStatus.approve ? "approved" : "rejected"}`,
+                    "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
+                },
+                token: riderStatus?.fcmtoken
+            })
             res.json({
                 error: false,
                 message: "Updated Successful!",
@@ -257,13 +263,6 @@ const riderDocumentStatusUpdate = async (req, res) => {
                 ...req.body
             }, { returnOriginal: false })
 
-            admin.messaging().send({
-                notification: {
-                    "title": `Profile ${riderStatus.approve ? "approved" : "rejected"}`,
-                    "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
-                },
-                token: riderStatus?.fcmtoken
-            })
             res.json({
                 error: false,
                 message: "Updated Successful!",

@@ -93,13 +93,6 @@ app.post("/notification", (req, res) => {
     .catch((err) => {
       console.log(err)
     })
-  // getMessaging().send({
-  //   notification: {
-  //     "title": `Profile ${req.body.approved ? "approved" : "rejected"}`,
-  //     "body": `Your profile has been ${req.body.approved ? "approved" : "rejected"}`,
-  //   },
-  //   token: req.body.token
-  // })
   res.json({ ...req.body });
 })
 
