@@ -4,6 +4,7 @@ const User = require("../Models/User")
 const bcrypt = require('bcrypt');
 const jwtToken = require('jsonwebtoken');
 const RiderTransactions = require("../Models/RiderTransactions");
+const { getMessaging } = require("firebase-admin/messaging");
 
 const newDoc = (type) => {
     const newDocObj = {
@@ -255,30 +256,14 @@ const riderDocumentStatusUpdate = async (req, res) => {
             const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
                 ...req.body
             }, { returnOriginal: false })
-            console.log("RIDER STATUS", riderStatus)
-            const myHeaders = new Headers();
-            myHeaders.append("Authorization", `key=${process.env.PUSH_NOTIFICATION_SERVER_KEY}`);
-            myHeaders.append("Content-Type", "application/json");
-            const raw = JSON.stringify({
-                "to": riderStatus.fcmtoken,
-                "notification": {
-                    "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
+
+            getMessaging().send({
+                notification: {
                     "title": `Profile ${riderStatus.approve ? "approved" : "rejected"}`,
-                    "subtitle": "postman subtitle"
-                }
-            });
-
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            fetch("https://fcm.googleapis.com/fcm/send", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
+                    "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
+                },
+                token: riderStatus?.fcmtoken
+            })
             res.json({
                 error: false,
                 message: "Updated Successful!",

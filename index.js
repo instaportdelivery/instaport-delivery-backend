@@ -1,3 +1,4 @@
+const admin = require('firebase-admin');
 require("dotenv").config();
 const express = require("express");
 const bodyparser = require("body-parser");
@@ -65,6 +66,15 @@ app.use("/customer-transactions", CustomerTransactionRoutes);
 const CouponRoutes = require("./Routes/Coupon");
 const { default: axios } = require("axios");
 app.use("/coupons", CouponRoutes);
+
+
+var serviceAccount = require("./service-account.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    projectId: 'oceanblue-app'
+});
+
 
 //Delivery Status Routes
 // const DeliveryStatusRoute = require("./Routes/DeliveryStatus");
