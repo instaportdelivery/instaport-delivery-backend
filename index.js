@@ -20,15 +20,15 @@ app.use(cors({
 const port = process.env.PORT || 1000;
 const httpServer = createServer(app);
 
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(bodyparser.json());
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   projectId: 'instaport-main',
   databaseURL: "https://instaport-main-default-rtdb.firebaseio.com"
 });
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(bodyparser.json());
+
 //Mongoose Connection
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
   .then(() => console.log("Connected to the db"))
