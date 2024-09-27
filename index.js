@@ -1,4 +1,3 @@
-const admin = require('firebase-admin');
 require("dotenv").config();
 const express = require("express");
 const bodyparser = require("body-parser");
@@ -11,10 +10,12 @@ const path = require("path");
 const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
+const admin = require('firebase-admin');
+var serviceAccount = require("./service-account.json");
 
 const app = express();
 app.use(cors({
-    origin: ["*", "http://localhost:3000", "https://www.instaportdelivery.com", "https://instaportdelivery.com", "http://localhost:5500", "https://instaport-transactions.vercel.app", "https://instaport.vercel.app", "https://instaport-website.vercel.app"]
+  origin: ["*", "http://localhost:3000", "https://www.instaportdelivery.com", "https://instaportdelivery.com", "http://localhost:5500", "https://instaport-transactions.vercel.app", "https://instaport.vercel.app", "https://instaport-website.vercel.app"]
 }))
 const port = process.env.PORT || 1000;
 const httpServer = createServer(app);
@@ -23,10 +24,15 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyparser.json());
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  projectId: 'instaport-main',
+  databaseURL: "https://instaport-main-default-rtdb.firebaseio.com"
+});
 //Mongoose Connection
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
-    .then(() => console.log("Connected to the db"))
-    .catch((err) => console.log(err))
+  .then(() => console.log("Connected to the db"))
+  .catch((err) => console.log(err))
 
 const io = socketIO(httpServer);
 
@@ -62,41 +68,54 @@ app.use("/auth", AuthRoutes);
 const CustomerTransactionRoutes = require("./Routes/CustomerTransaction");
 app.use("/customer-transactions", CustomerTransactionRoutes);
 
+app.post("/notification", (req, res) => {
+  admin.messaging().send({
+    notification: {
+      "title": `Profile ${req.body.approved ? "approved" : "rejected"}`,
+      "body": `Your profile has been ${req.body.approved ? "approved" : "rejected"}`,
+    },
+    token: req.body.token
+  })
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+  // getMessaging().send({
+  //   notification: {
+  //     "title": `Profile ${req.body.approved ? "approved" : "rejected"}`,
+  //     "body": `Your profile has been ${req.body.approved ? "approved" : "rejected"}`,
+  //   },
+  //   token: req.body.token
+  // })
+  res.json({ ...req.body });
+})
+
 //Coupons Routes
 const CouponRoutes = require("./Routes/Coupon");
 const { default: axios } = require("axios");
 app.use("/coupons", CouponRoutes);
 
 
-var serviceAccount = require("./service-account.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    projectId: 'oceanblue-app'
-});
-
-
-//Delivery Status Routes
-// const DeliveryStatusRoute = require("./Routes/DeliveryStatus");
-// app.use("/delivery-status", DeliveryStatusRoute);
 
 //Home Routes
 app.get("/", (req, res) => res.send("Server Is On"))
 app.post("/distance", async (req, res) => {
-    let key = process.env.MAP_KEY
-    let source = req.body.source
-    let destination = req.body.destination
-    let pickupEncoded = `${source.latitude},${source.longitude}`;
-    let dropEncoded = `${destination.latitude},${destination.longitude}`;
-    let url = `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${pickupEncoded}&origins=${dropEncoded}&key=${key}`;
-    const response = await axios(url)
-    const route = response.data.rows[0];
+  let key = process.env.MAP_KEY
+  let source = req.body.source
+  let destination = req.body.destination
+  let pickupEncoded = `${source.latitude},${source.longitude}`;
+  let dropEncoded = `${destination.latitude},${destination.longitude}`;
+  let url = `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${pickupEncoded}&origins=${dropEncoded}&key=${key}`;
+  const response = await axios(url)
+  const route = response.data.rows[0];
 
-    if (route && route.elements.length > 0) {
-        return res.send((route.elements[0].distance.value / 1000).toFixed(2));
-    } else {
-        return 0;
-    }
+  if (route && route.elements.length > 0) {
+    return res.send((route.elements[0].distance.value / 1000).toFixed(2));
+  } else {
+    return 0;
+  }
 })
 
 const s3Client = new S3Client({
@@ -227,13 +246,13 @@ app.post("/multi-upload", upload.array("files", 10), async (req, res) => {
 
 
 app.post("/authtest", (req, res) => {
-    return res.json({
-        data: `${req.body.transaction_response}`
-    })
-    // return res.redirect(`https://google.com/?data=${req.body.transaction_response}`)
+  return res.json({
+    data: `${req.body.transaction_response}`
+  })
+  // return res.redirect(`https://google.com/?data=${req.body.transaction_response}`)
 })
 
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
