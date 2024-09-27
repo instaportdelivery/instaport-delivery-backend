@@ -136,6 +136,7 @@ app.post("/upload", upload.array("files"), async (req, res) => {
   console.log(req.files[0], req.body.path)
   try {
     const media = await s3Uploadv3SingleFile(req.files[0], req.body.path);
+    console.log(media);
     return res.json({ status: "success", media });
   } catch (err) {
     return res.json({ status: "error", media: null });
