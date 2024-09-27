@@ -280,7 +280,7 @@ const riderOrders = async (req, res) => {
         const rider = await Rider.findById(req.rider._id);
         let orders = [];
 
-        if (rider.wallet_amount >= 0) {
+        if (!rider.isDue) {
             orders = await Order.find({
                 status: {
                     $ne: 'unpaid'

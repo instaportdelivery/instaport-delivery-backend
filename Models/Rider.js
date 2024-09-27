@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const DOCUMENT_SCHEMA = new mongoose.Schema({
     url: String,
     status: String,
-    type: String
+    type: String,
+    reason: String
 })
 const RIDER_SCEHMA = new mongoose.Schema({
     fullname: {
@@ -106,6 +107,10 @@ const RIDER_SCEHMA = new mongoose.Schema({
         type: Boolean,
         default: false,
         required: true
+    },
+    isDue: {
+        type: Boolean,
+        default: false,
     }
 })
 

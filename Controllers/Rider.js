@@ -230,6 +230,32 @@ const riderStatus = async (req, res) => {
             const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
                 ...req.body
             }, { returnOriginal: false })
+
+            res.json({
+                error: false,
+                message: "Updated Successful!",
+                rider: riderStatus,
+            });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                error: true,
+                message: error.message,
+            });
+        }
+    }
+}
+
+const riderDocumentStatusUpdate = async (req, res) => {
+    const rider = await Rider.findOne({ _id: req.params._id })
+    console.log(req.body)
+    if (!rider) res.json({ error: true, message: "Something Went Wrong", rider: undefined })
+    else {
+        try {
+            const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
+                ...req.body
+            }, { returnOriginal: false })
+            console.log("RIDER STATUS", riderStatus)
             const myHeaders = new Headers();
             myHeaders.append("Authorization", `key=${process.env.PUSH_NOTIFICATION_SERVER_KEY}`);
             myHeaders.append("Content-Type", "application/json");
@@ -253,29 +279,6 @@ const riderStatus = async (req, res) => {
                 .then((response) => response.text())
                 .then((result) => console.log(result))
                 .catch((error) => console.error(error));
-            res.json({
-                error: false,
-                message: "Updated Successful!",
-                rider: riderStatus,
-            });
-        } catch (error) {
-            res.status(500).json({
-                error: true,
-                message: error.message,
-            });
-        }
-    }
-}
-
-const riderDocumentStatusUpdate = async (req, res) => {
-    const rider = await Rider.findOne({ _id: req.params._id })
-    console.log(req.body)
-    if (!rider) res.json({ error: true, message: "Something Went Wrong", rider: undefined })
-    else {
-        try {
-            const riderStatus = await Rider.findByIdAndUpdate(rider._id, {
-                ...req.body
-            }, { returnOriginal: false })
             res.json({
                 error: false,
                 message: "Updated Successful!",
