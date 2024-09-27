@@ -15,7 +15,7 @@ const newDoc = (type) => {
 
     return newDocObj
 }
-
+const serverKey = process.env.SERVER_SECRET
 const riderSignup = async (req, res) => {
     try {
         const user = await User.findOne({ mobileno: req.body.mobileno });
@@ -422,7 +422,7 @@ const adminTransaction = async (req, res) => {
 
 const payDues = async (req, res) => {
     try {
-        const transactionData = await jwtToken.verify(req.body.transaction_response, "31MhbX6UsCr7io5GJltm7kXsbbnxs7KO")
+        const transactionData = await jwtToken.verify(req.body.transaction_response, serverKey)
         const riderTransaction = new RiderTransactions({
             amount: Number(transactionData.amount),
             completed: false,
@@ -435,7 +435,8 @@ const payDues = async (req, res) => {
         const riderData = await Rider.findByIdAndUpdate(riderTransaction.rider._id, {
             $inc: {
                 wallet_amount: Number(transactionData.amount)
-            }
+            },
+            isDue: false
         })
         if (savedTransaction) {
             return res.redirect("https://instaport-transactions.vercel.app/success-order.html");

@@ -11,6 +11,7 @@ const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 const admin = require('firebase-admin');
+const cron = require('node-cron');
 
 const app = express();
 app.use(cors({
@@ -99,6 +100,7 @@ app.post("/notification", (req, res) => {
 //Coupons Routes
 const CouponRoutes = require("./Routes/Coupon");
 const { default: axios } = require("axios");
+const Rider = require("./Models/Rider");
 app.use("/coupons", CouponRoutes);
 
 
@@ -255,6 +257,22 @@ app.post("/authtest", (req, res) => {
   })
   // return res.redirect(`https://google.com/?data=${req.body.transaction_response}`)
 })
+
+cron.schedule('59 23 * * *', async () => {
+  console.log('Running a task every minute');
+  const data = await Rider.find();
+  data.forEach(async (rider) => {
+    if (rider.wallet_amount < 0) {
+      await Rider.findByIdAndUpdate(rider._id, {
+        isDue: true
+      })
+    } else {
+      await Rider.findByIdAndUpdate(rider._id, {
+        isDue: false
+      })
+    }
+  })
+});
 
 
 app.listen(port, '0.0.0.0', () => {
