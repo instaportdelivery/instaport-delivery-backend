@@ -11,7 +11,6 @@ const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 const admin = require('firebase-admin');
-var serviceAccount = require("./service-account.json");
 
 const app = express();
 app.use(cors({
@@ -19,6 +18,10 @@ app.use(cors({
 }))
 const port = process.env.PORT || 1000;
 const httpServer = createServer(app);
+
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(bodyparser.json());
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -36,9 +39,6 @@ admin.initializeApp({
   projectId: 'instaport-main',
   databaseURL: "https://instaport-main-default-rtdb.firebaseio.com"
 });
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(bodyparser.json());
 
 //Mongoose Connection
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })

@@ -4,7 +4,7 @@ const User = require("../Models/User")
 const bcrypt = require('bcrypt');
 const jwtToken = require('jsonwebtoken');
 const RiderTransactions = require("../Models/RiderTransactions");
-const { getMessaging } = require("firebase-admin/messaging");
+const admin = require('firebase-admin');
 
 const newDoc = (type) => {
     const newDocObj = {
@@ -257,7 +257,7 @@ const riderDocumentStatusUpdate = async (req, res) => {
                 ...req.body
             }, { returnOriginal: false })
 
-            getMessaging().send({
+            admin.messaging().send({
                 notification: {
                     "title": `Profile ${riderStatus.approve ? "approved" : "rejected"}`,
                     "body": `Your profile has been ${riderStatus.approve ? "approved" : "rejected"}`,
