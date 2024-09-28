@@ -111,6 +111,10 @@ const RIDER_SCEHMA = new mongoose.Schema({
     isDue: {
         type: Boolean,
         default: false,
+    },
+    applied: {
+        type: Boolean,
+        default: false,
     }
 })
 
