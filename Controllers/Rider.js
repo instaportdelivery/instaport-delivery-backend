@@ -206,7 +206,12 @@ const reAssign = async (req, res) => {
 }
 
 const riderData = async (req, res) => {
-    const rider = await Rider.findOne({ _id: req.rider._id }, { password: 0 });
+    let rider
+    if (req.params._id) {
+        rider = await Rider.findOne({ _id: req.params._id }, { password: 0 });
+    } else {
+        rider = await Rider.findOne({ _id: req.rider._id }, { password: 0 });
+    }
     if (!rider) res.json({ error: true, message: "Something Went Wrong", rider: undefined })
     else {
         try {
