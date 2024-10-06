@@ -14,7 +14,7 @@ router.post("/get-validity", getUserValidity);
 router.post("/get-validity-actual", getRiderValidity);
 router.patch("/assign/:_id", RiderToken, orderAssign);
 router.get("/", RiderToken, riderData)
-router.get("/:_id", AdminToken, riderData)
+router.post("/:_id", AdminToken, riderData)
 router.patch("/admin/update/:_id", AdminToken, riderDocumentStatusUpdate)
 router.patch("/riderstatus", AdminToken, riderStatus)
 router.delete("/delete/:_id", AdminToken, deleteRider)
