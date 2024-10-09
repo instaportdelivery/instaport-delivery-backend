@@ -333,7 +333,19 @@ const completedOrder = async (req, res) => {
             },
             $inc: {
                 wallet_amount: order.payment_method === "cod" ? - order.amount * (order.commission / 100) : order.amount * ((100 - order.commission) / 100)
+            },
+        }, {returnOriginal: false})
+
+        let type = false;
+        if(rider.isDue){
+            if(rider.wallet_amount < 0){
+                type = true
+            }else{
+                type =  false
             }
+        }
+        const updatedRider = await Rider.findByIdAndUpdate(order.rider, {
+            isDue: type
         })
         const transaction = new RiderTransactions({
             amount: order.payment_method === "cod" ? order.amount * (order.commission / 100) : order.amount * ((100 - order.commission) / 100),
