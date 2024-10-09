@@ -14,18 +14,18 @@ router.post("/get-validity", getUserValidity);
 router.post("/get-validity-actual", getRiderValidity);
 router.patch("/assign/:_id", RiderToken, orderAssign);
 router.get("/", RiderToken, riderData)
+router.post("/request-money", RiderToken, requestAmount);
+router.post("/app-payment/", payDues)
 router.post("/:_id", AdminToken, riderData)
 router.patch("/admin/update/:_id", AdminToken, riderDocumentStatusUpdate)
 router.patch("/riderstatus", AdminToken, riderStatus)
 router.delete("/delete/:_id", AdminToken, deleteRider)
 
 router.get("/transactions", RiderToken, getRiderTransactions);
-router.post("/request-money", RiderToken, requestAmount);
 
 router.patch("/pay/:_id", AdminToken, confirmPayAdmin);
 router.get("/admin/transactions", AdminToken, adminTransaction);
 
-router.post("/app-payment/", payDues)
 
 router.patch("/admin/reassign/:_id", AdminToken, reAssign);
 module.exports = router;
