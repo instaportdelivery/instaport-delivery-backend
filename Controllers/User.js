@@ -32,7 +32,7 @@ const userSignup = async (req, res) => {
 const userSignin = async (req, res) => {
     const user = await User.findOne({ mobileno: req.body.mobileno });
     if (!user) {
-        res.json({ error: true, message: "Something Went Wrong", token: "" })
+        res.json({ error: true, message: "Account not found", token: "" })
     } else {
         try {
             if (await bcrypt.compare(req.body.password, user.password)) {
@@ -42,7 +42,7 @@ const userSignin = async (req, res) => {
                 user.save();
                 res.json({ error: false, message: "Logged In Successfully", token: token })
             } else {
-                res.json({ error: true, message: "Invalid Credentials", token: "" })
+                res.json({ error: true, message: "Wrong id or password", token: "" })
             }
         } catch (error) {
             res.json({ error: true, message: error.message, token: "" })
